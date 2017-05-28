@@ -20,4 +20,5 @@ hey-stop [options] command [argument ...]
 ### License
 
 Copyright@2017 Yang Zhou & Xiting Zhao
+
 Released under the terms of MIT License.
