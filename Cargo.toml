@@ -8,9 +8,10 @@ authors = ["zhouyang <zhouyang@shanghaitech.edu.cn>"]
 clap = "2.21.1"
 libc = "0.2.21"
 log = "0.3.7"
-nix = { git = "https://github.com/chaosagent/nix", rev="34acfdd"}
+nix = "0.8.1"
 ptrace = { git  = "https://github.com/chaosagent/rust-ptrace" , rev = "1e75a88"}
 syscall = "0.2.1"
+fnv = "1.0.5"
 
 
 
