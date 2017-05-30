@@ -9,9 +9,7 @@ clap = "2.21.1"
 libc = "0.2.21"
 log = "0.3.7"
 nix = "0.8.1"
-ptrace = { git  = "https://github.com/chaosagent/rust-ptrace" , rev = "1e75a88"}
+seccomp={git = "https://github.com/zzxxtt/rust-seccomp"}
+ptrace = { git  = "https://github.com/zzxxtt/rust-ptrace"}
 syscall = "0.2.1"
 fnv = "1.0.5"
-
-
-

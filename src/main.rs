@@ -1,4 +1,4 @@
-
+extern crate seccomp;
 extern crate clap;
 extern crate libc;
 extern crate nix;
@@ -96,6 +96,77 @@ impl process {
         }
     }
 
+    fn setup_seccomp(&self) {
+        let filter = seccomp::Filter::new(&seccomp::ACT_KILL)
+            .ok()
+            .expect("Could not allocate seccomp filter");
+        let trace = seccomp::act_trace(0);
+
+
+        filter.rule_add(&seccomp::ACT_KILL, seccomp::Syscall::PTRACE, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EXECVE, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::CLONE, &[]);
+
+        filter.rule_add(&trace, seccomp::Syscall::CHDIR, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::FCHDIR, &[]);
+
+        filter.rule_add(&trace, seccomp::Syscall::OPEN, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::ACCESS, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::OPENAT, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::STAT, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::LSTAT, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::GETCWD, &[]);
+        filter.rule_add(&trace, seccomp::Syscall::READLINK, &[]);
+
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::FSYNC, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::FDATASYNC, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::SYNC, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::POLL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::MMAP, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::MPROTECT, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::MUNMAP, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::MADVISE, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::BRK, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::RT_SIGACTION, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::RT_SIGPROCMASK, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::SELECT, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::SCHED_YIELD, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::GETPID, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::ACCEPT, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::LISTEN, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EXIT, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::GETTIMEOFDAY, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::TKILL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EPOLL_CREATE, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::RESTART_SYSCALL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::CLOCK_GETTIME, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::CLOCK_GETRES, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::CLOCK_NANOSLEEP, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::GETTID, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::IOCTL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::NANOSLEEP, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EXIT_GROUP, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EPOLL_WAIT, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EPOLL_CTL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::TGKILL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::PSELECT6, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::PPOLL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::ARCH_PRCTL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::PRCTL, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::SET_ROBUST_LIST, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::GET_ROBUST_LIST, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EPOLL_PWAIT, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::ACCEPT4, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EVENTFD2, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::EPOLL_CREATE1, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::PIPE2, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::FUTEX, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::SET_TID_ADDRESS, &[]);
+        filter.rule_add(&seccomp::ACT_ALLOW, seccomp::Syscall::SET_THREAD_AREA, &[]);
+
+        //filter.load().ok().expect("Could not load filter");
+    }
+
     pub fn start(&mut self) -> Result<(), i32> {
 
         match unistd::fork() {
@@ -142,6 +213,9 @@ impl process {
                     let mut ptrace_options = 0;
                     ptrace_options |= ptrace::PTRACE_O_EXITKILL;
                     ptrace_options |= ptrace::PTRACE_O_TRACECLONE;
+                    //ptrace_options |= ptrace::PTRACE_O_TRACEEXIT;
+                    //ptrace_options |= ptrace::PTRACE_O_TRACESECCOMP;
+                    //ptrace_options |= ptrace::PTRACE_O_TRACEEXEC;
                     ptrace::setoptions(self.child_pid, ptrace_options)
                         .expect("Failed to set ptrace options!");
 
@@ -172,7 +246,7 @@ impl process {
 
 
                     let result = Err(1);
-                    self.kill_program().expect("Failed to kill child!"); 
+                    self.kill_program().expect("Failed to kill child!");
                     return result;
                 }
                 wait::WaitStatus::Stopped(pid, sig) => {
@@ -241,11 +315,19 @@ impl process {
 
             println!("{:?}", syscall.call);
 
-//read rdi register,need fix
-	    if syscall.call==0 {
-			let mut reader=ptrace::Reader::new(self.child_pid);
-			println!("{:?}",reader.read_string(syscall.args[0],1000));
-	    }
+            //read rdi register,need fix
+            if syscall.call == 2 {
+                println!("{:?},open",
+                         ptrace::ptrace_raw(ptrace::PTRACE_PEEKUSER,
+                                            self.child_pid,
+                                            112 as *mut libc::c_void,
+                                            0 as *mut libc::c_void));
+                let mut reader = ptrace::Reader::new(self.child_pid);
+
+                let register = ptrace::getregs(self.child_pid);
+                println!("{:?}", register.unwrap().rsi);
+                println!("{:?}", reader.peek_data(syscall.args[1]));
+            }
 
             if syscall.return_val == -libc::ENOSYS as isize {
 
@@ -281,5 +363,6 @@ fn main() {
     let executor = Execvp::new(args.as_slice());
 
     let mut newprocess = process::new(Box::new(executor));
+    newprocess.setup_seccomp();
     let result = newprocess.start();
 }
